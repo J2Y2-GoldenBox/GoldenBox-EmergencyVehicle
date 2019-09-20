@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:layout_gravity="center">
+    <ImageButton
+        android:id="@+id/toggle"
+        android:layout_width="267dp"
+        android:layout_height="250dp"
+        android:layout_gravity="center"
+        android:background="@drawable/imgbtn_states"
+        />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="15"
+        android:textSize="20dp"
+        android:id="@+id/start"
+        android:layout_gravity="center"
+        android:layout_margin="30dp"
+        android:hint="출발지를 입력하세요"
+        />
+
+    <EditText
+        android:id="@+id/destination"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:ems="15"
+        android:textSize="20dp"
+        android:layout_margin="10dp"
+        android:hint="목적지를 입력하세요" />
+    <TextView
+        android:id="@+id/latitudeView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="위도"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="40dp"
+        android:layout_gravity="center"
+        />
+
+</LinearLayout>
