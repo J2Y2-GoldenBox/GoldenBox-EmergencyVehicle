@@ -119,9 +119,9 @@ public class MainActivity extends AppCompatActivity {
                                     mLocationListener);
                         }
                     } else {
-                        if(flag == false) {
+                        if(flag == true) {
                             formatDate = null;
-                            mDatabase.child(nowtime).child("finish").setValue("true");
+                            mDatabase.child("finish").child(nowtime).setValue("finished");
                             Log.d("GPS", "위치정보 미수신중");
                             lm.removeUpdates(mLocationListener);//  미수신할때는 반드시 자원해체를 해주어야 한다.
                         }
