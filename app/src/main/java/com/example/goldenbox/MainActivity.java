@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean getRoute(){
         String start = startTextView.getText().toString();
         String destination = destinationTextView.getText().toString();
-        HashMap<String,Double> hm = gc.addressTogps(geocoder, destination, start);
+        HashMap<String,Double> hm = gc.addressTogps(geocoder, start, destination);
         if(hm != null) {
             latitudeView.setText("출발지latitude : " + hm.get("startlatitude") + ", longitude : " + hm.get("startlongitude") + "\n" + "목적지latitude : " + hm.get("destinationlatitude") + ", longitude : " + hm.get("destinationlongitude"));
             destinationlongitude =  hm.get("destinationlongitude");
