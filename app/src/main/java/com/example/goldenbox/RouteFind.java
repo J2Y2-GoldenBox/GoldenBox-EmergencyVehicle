@@ -82,6 +82,7 @@ public class RouteFind extends AsyncTask<HashMap,String,String> {
             Log.d("TAG",jsonObject.toString());
             String path = jsonObject.getString("path");
             MainActivity.pathArray = path;
+            MainActivity.checkflag = true;
 
             Log.d("PATH",path.toString());
             JSONArray pathArray = new JSONArray(path);

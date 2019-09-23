@@ -6,13 +6,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -27,6 +30,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 
@@ -39,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private Button sendGPSbutton,receiveGPSButton;
     private static TextView textView,latitudeView;
     public EditText startTextView,destinationTextView;
-    public DatabaseReference mDatabase,mDatabase2;
+    public static DatabaseReference mDatabase,mDatabase2;
     public String url = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start=127.1058342,37.359708&goal=129.075986,35.179470&option=trafast";
     public Geocode gc;
     Geocoder geocoder;
@@ -53,8 +57,10 @@ public class MainActivity extends AppCompatActivity {
     String nowtime =null;
     static double startlatitude,startlongitude,destinationlatitude,destinationlongitude;
     boolean flag = false;
+    static boolean checkflag = false;
     static String pathArray;
-
+    LocationManager lmdestroy=null;
+    DatabaseReference myRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.firstlayout_activity);
         //setContentView(R.layout.activity_main);
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase2 = FirebaseDatabase.getInstance().getReference();
+        myRef = FirebaseDatabase.getInstance().getReference("code");
         sendGPSbutton = (Button)findViewById(R.id.button1);
         receiveGPSButton = (Button)findViewById(R.id.button2);
         textView = (TextView)findViewById(R.id.textView2);
@@ -75,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
         //LocationManager 객체를 얻어온다
         final LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        lmdestroy = lm;
         ImageButton toggle = (ImageButton)findViewById(R.id.toggle);
         toggle.setOnClickListener(new View.OnClickListener() {
 
@@ -101,11 +108,18 @@ public class MainActivity extends AppCompatActivity {
                 try{
                     if(button.isSelected()) {//여기는 경로 얻어서 파이어 베이스 올리는 구역
                         flag = getRoute();
+
                         if (flag == true){
-                            while (arrayList2.size() == 0) {
+                            while (true) {
                                 //Log.d("TAGwhile", "wait..");
+                                if(checkflag==true){
+                                    break;
+                                }
                             }
                             mDatabase.child(formatDate).child("route").setValue(pathArray);
+                            Log.d("TAGPATH",pathArray);
+                            mDatabase.child("destination").child(formatDate).child("finish").removeValue();
+                            mDatabase.child("finish").child(formatDate).removeValue();
 
                             Log.d("GPS", "수신중...");
                             // GPS 제공자의 정보가 바뀌면 콜백하도록 리스너 등록하기~!!!
@@ -120,8 +134,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                     } else {
                         if(flag == true) {
+                            checkflag = false;
                             formatDate = null;
                             mDatabase.child("finish").child(nowtime).setValue("finished");
+                            mDatabase.child("destination").child(nowtime).child("finish").setValue("true");
                             Log.d("GPS", "위치정보 미수신중");
                             lm.removeUpdates(mLocationListener);//  미수신할때는 반드시 자원해체를 해주어야 한다.
                         }
@@ -131,6 +147,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     private final LocationListener mLocationListener = new LocationListener() {
         public void onLocationChanged(Location location) {
