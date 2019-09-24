@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -61,7 +62,102 @@ public class MainActivity extends AppCompatActivity {
     static String pathArray;
     LocationManager lmdestroy=null;
     DatabaseReference myRef;
+    ImageButton toggle;
+    static boolean onStartFlag=false;
+    static String onstartLatitude=null,onstartLongitude=null, ondestinationLatitude = null, ondestinationLongitude=null,onStartTime=null,startAddress=null,destinationAddress= null;
+    RelativeLayout layout2 = null;
+    //LocationManager 객체를 얻어온다
+    LocationManager lm2 = null;
 
+    @Override
+    protected void onStart(){
+
+        Log.d("START","onStart()");
+        onStartFlag=false;
+        formatDate=null;
+        mDatabase.child("destination").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d("SNAP",dataSnapshot.getKey());
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Log.d("SNAP2",snapshot.getKey());
+                    DataSnapshot snap = snapshot.child("finish");
+                    if(snap.getValue().equals("false")){
+
+                        onstartLatitude = snapshot.child("startLatitude").getValue().toString();
+                        onstartLongitude = snapshot.child("startLongitude").getValue().toString();
+                        ondestinationLatitude = snapshot.child("destinationLatitude").getValue().toString();
+                        ondestinationLongitude = snapshot.child("destinationLongitude").getValue().toString();
+                        startAddress = snapshot.child("startAddress").getValue().toString();
+                        destinationAddress = snapshot.child("destinationAddress").getValue().toString();
+                        onStartFlag=true;
+                        onStartTime = snapshot.getKey();
+
+                        Log.d("SNAP4","실행됨");
+                        toggle.setSelected(true);
+                        //layout.setBackgroundResource(R.color.red);
+                        try{
+                                flag = getRoute();
+
+                                if (flag == true){
+
+                                    layout2.setBackgroundResource(R.color.red);
+                                    while (true) {
+                                        //Log.d("TAGwhile", "wait..");
+                                        if(checkflag==true){
+                                            break;
+                                        }
+                                    }
+                                    mDatabase.child(onStartTime).child("route").setValue(pathArray);
+                                    Log.d("TAGPATH",pathArray);
+
+                                    mDatabase.child("finish").child(onStartTime).removeValue();
+
+                                    Log.d("GPS", "수신중...");
+                                    // GPS 제공자의 정보가 바뀌면 콜백하도록 리스너 등록하기~!!!
+                                    lm2.requestLocationUpdates(LocationManager.GPS_PROVIDER, // 등록할 위치제공자
+                                            100, // 통지사이의 최소 시간간격 (miliSecond)
+                                            1, // 통지사이의 최소 변경거리 (m)
+                                            mLocationListener);
+                                    lm2.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, // 등록할 위치제공자
+                                            100, // 통지사이의 최소 시간간격 (miliSecond)
+                                            1, // 통지사이의 최소 변경거리 (m)
+                                            mLocationListener);
+                                }
+                        }catch (SecurityException ex) {
+                        }
+                    }
+                    Log.d("SNAP3",snap.getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        super.onStart();
+    }
+    @Override
+    protected void onPause(){
+        Log.d("PAUSE","onPuase()");
+        super.onPause();
+    }
+    @Override
+    protected void onStop(){
+        Log.d("STOP","onStop()");
+        super.onStop();
+    }
+    @Override
+    protected void onDestroy(){
+        Log.d("DESTROY","onDestroy()");
+        super.onDestroy();
+    }
+    @Override
+    protected void onRestart(){
+        Log.d("RESTART","onRestart()");
+        super.onRestart();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,29 +168,27 @@ public class MainActivity extends AppCompatActivity {
         sendGPSbutton = (Button)findViewById(R.id.button1);
         receiveGPSButton = (Button)findViewById(R.id.button2);
         textView = (TextView)findViewById(R.id.textView2);
-        latitudeView = (TextView)findViewById(R.id.latitudeView);
+        //latitudeView = (TextView)findViewById(R.id.latitudeView);
         startTextView = (EditText)findViewById(R.id.start);
         destinationTextView = (EditText)findViewById(R.id.destination);
         gc = new Geocode();
         final Geocoder geocoder =  new Geocoder(this);
         this.geocoder = geocoder;
-
+        toggle = (ImageButton)findViewById(R.id.toggle);
+        final RelativeLayout layout = (RelativeLayout)findViewById(R.id.plinear);
+        layout2=layout;
         //LocationManager 객체를 얻어온다
         final LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        lmdestroy = lm;
-        ImageButton toggle = (ImageButton)findViewById(R.id.toggle);
+        lm2 = lm;
+
+        //ImageButton toggle = (ImageButton)findViewById(R.id.toggle);
+
         toggle.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View button) {
                 button.setSelected(!button.isSelected());
-                if(formatDate ==null) {
-                    long now = System.currentTimeMillis();
-                    date = new Date(now);
-                    SimpleDateFormat sdfNow = new SimpleDateFormat("yyyyMMddHHmm");
-                    formatDate = sdfNow.format(date);
-                    nowtime = formatDate;
-                }
+
                 //
                 Log.d("Log","try");
                 if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -107,9 +201,18 @@ public class MainActivity extends AppCompatActivity {
                 }
                 try{
                     if(button.isSelected()) {//여기는 경로 얻어서 파이어 베이스 올리는 구역
+                        if(formatDate ==null) {
+                            long now = System.currentTimeMillis();
+                            date = new Date(now);
+                            SimpleDateFormat sdfNow = new SimpleDateFormat("yyyyMMddHHmm");
+                            formatDate = sdfNow.format(date);
+                            Log.d("SNAP10",formatDate);
+                            nowtime = formatDate;
+                        }
                         flag = getRoute();
 
                         if (flag == true){
+                            layout.setBackgroundResource(R.color.red);
                             while (true) {
                                 //Log.d("TAGwhile", "wait..");
                                 if(checkflag==true){
@@ -118,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                             mDatabase.child(formatDate).child("route").setValue(pathArray);
                             Log.d("TAGPATH",pathArray);
-                            mDatabase.child("destination").child(formatDate).child("finish").removeValue();
+
                             mDatabase.child("finish").child(formatDate).removeValue();
 
                             Log.d("GPS", "수신중...");
@@ -133,14 +236,23 @@ public class MainActivity extends AppCompatActivity {
                                     mLocationListener);
                         }
                     } else {
-                        if(flag == true) {
-                            checkflag = false;
-                            formatDate = null;
-                            mDatabase.child("finish").child(nowtime).setValue("finished");
-                            mDatabase.child("destination").child(nowtime).child("finish").setValue("true");
-                            Log.d("GPS", "위치정보 미수신중");
                             lm.removeUpdates(mLocationListener);//  미수신할때는 반드시 자원해체를 해주어야 한다.
-                        }
+                            lm2.removeUpdates(mLocationListener);
+                            checkflag = false;
+                            if(onStartFlag==true)
+                                mDatabase.child("finish").child(onStartTime).setValue("finished");
+                            else
+                                mDatabase.child("finish").child(nowtime).setValue("finished");
+                            if(onStartFlag == true)
+                                mDatabase.child("destination").child(onStartTime).child("finish").setValue("true");
+                            else
+                                mDatabase.child("destination").child(nowtime).child("finish").setValue("true");
+                            Log.d("GPS", "위치정보 미수신중");
+                            formatDate=null;
+                            layout.setBackgroundResource(R.color.nonecolor);
+                            onStartFlag=false;
+                            flag=false;
+
                     }
                 }catch (SecurityException ex) {
                 }
@@ -162,8 +274,14 @@ public class MainActivity extends AppCompatActivity {
             String provider = location.getProvider();   //위치제공자
             /*locationSubject.onNext*/Log.d("GPS","위치정보 : " + provider + "\n위도 : " + longitude + "\n경도 : " + latitude
                     + "\n고도 : " + altitude + "\n정확도 : " + accuracy);
-            cg = new CarGPS(latitude,longitude,formatDate);
-            mDatabase.child(formatDate).child("emergencyCarLocation").setValue(cg);
+            if(onStartFlag==true)
+                cg = new CarGPS(latitude,longitude,onStartTime);
+            else
+                cg = new CarGPS(latitude,longitude,formatDate);
+            if(onStartFlag==true)
+                mDatabase.child(onStartTime).child("emergencyCarLocation").setValue(cg);
+            else
+                mDatabase.child(nowtime).child("emergencyCarLocation").setValue(cg);
         }
 
         public void onProviderDisabled(String provider) {
@@ -184,27 +302,49 @@ public class MainActivity extends AppCompatActivity {
 
 
     public boolean getRoute(){
+
         String start = startTextView.getText().toString();
         String destination = destinationTextView.getText().toString();
         HashMap<String,Double> hm = gc.addressTogps(geocoder, start, destination);
         if(hm != null) {
-            latitudeView.setText("출발지latitude : " + hm.get("startlatitude") + ", longitude : " + hm.get("startlongitude") + "\n" + "목적지latitude : " + hm.get("destinationlatitude") + ", longitude : " + hm.get("destinationlongitude"));
+            //latitudeView.setText("출발지latitude : " + hm.get("startlatitude") + ", longitude : " + hm.get("startlongitude") + "\n" + "목적지latitude : " + hm.get("destinationlatitude") + ", longitude : " + hm.get("destinationlongitude"));
             destinationlongitude =  hm.get("destinationlongitude");
             destinationlatitude = hm.get("destinationlatitude");
             startlongitude =  hm.get("startlongitude");
             startlatitude = hm.get("startlatitude");
-            HashMap<String, Double> result = new HashMap<>();
-            result.put("startLatitude", startlatitude);
-            result.put("startLongitude", startlongitude);
-            result.put("destinationLatitude", destinationlatitude);
-            result.put("destinationLongitude", destinationlongitude);
+            HashMap<String, String> result = new HashMap<>();
+            result.put("startLatitude", Double.toString(startlatitude));
+            result.put("startLongitude",  Double.toString(startlongitude));
+            result.put("destinationLatitude",  Double.toString(destinationlatitude));
+            result.put("destinationLongitude",  Double.toString(destinationlongitude));
+            result.put("startAddress",start);
+            result.put("destinationAddress",destination);
+            result.put("finish","false");
 
-            mDatabase.child("destination").child(formatDate).setValue(result);
+
+            mDatabase.child("destination").child(nowtime).setValue(result);
             new RouteFind().execute(hm);
+            return true;
+        }else if(onStartFlag==true){
+            HashMap<String, String> result = new HashMap<>();
+            result.put("startLatitude", onstartLatitude);
+            result.put("startLongitude",  onstartLongitude);
+            result.put("destinationLatitude", ondestinationLatitude);
+            result.put("destinationLongitude", ondestinationLongitude);
+            result.put("startAddress",startAddress);
+            result.put("destinationAddress",destinationAddress);
+            result.put("finish","false");
+            HashMap<String,Double> hm2 = gc.addressTogps(geocoder, startAddress, destinationAddress);
+
+            mDatabase.child("destination").child(onStartTime).setValue(result);
+
+            new RouteFind().execute(hm2);
             return true;
         }else{
             Toast.makeText(this,"주소가 잘못되었습니다. 다시 입력해주세요",Toast.LENGTH_LONG).show();
+            toggle.setSelected(false);
             return false;
         }
     }
 }
+

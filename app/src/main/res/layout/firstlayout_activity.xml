@@ -1,47 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity"
     android:orientation="vertical"
-    android:layout_gravity="center">
+    android:layout_gravity="center"
+    android:id="@+id/plinear">
+
     <ImageButton
         android:id="@+id/toggle"
-        android:layout_width="267dp"
-        android:layout_height="250dp"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_margin="20dp"
+        android:layout_weight="1"
         android:background="@drawable/imgbtn_states"
+        android:layout_alignBottom="@id/cline"
+        android:layout_centerInParent="true"
         />
-    <EditText
+    <View
+        android:id="@+id/cline"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="15"
-        android:textSize="20dp"
-        android:id="@+id/start"
-        android:layout_gravity="center"
-        android:layout_margin="30dp"
-        android:hint="출발지를 입력하세요"
+        android:layout_height="0dp"
+        android:layout_centerInParent="true"
+        android:background="@color/colorPrimary"
         />
-
-    <EditText
-        android:id="@+id/destination"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:ems="15"
-        android:textSize="20dp"
-        android:layout_margin="10dp"
-        android:hint="목적지를 입력하세요" />
-    <TextView
-        android:id="@+id/latitudeView"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="위도"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="40dp"
+        android:orientation="vertical"
         android:layout_gravity="center"
-        />
+        android:layout_weight="1"
+        android:id="@+id/slinear"
+        android:layout_alignTop="@id/cline"
+        android:layout_alignParentBottom="true"
+        >
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="15"
+            android:textSize="20dp"
+            android:id="@+id/start"
+            android:layout_gravity="center"
+            android:layout_margin="20dp"
+            android:hint="출발지를 입력하세요"
+            android:privateImeOptions="defaultInputmode=korean"
+            android:layout_weight="1"
+            android:background="@drawable/roundet"
+            android:layout_alignBottom="@id/ccline"
+            android:layout_centerInParent="true"
+            android:padding="13dp"
+            />
+        <View
+            android:id="@+id/ccline"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_centerInParent="true"
+            android:background="@color/colorPrimary"
+            />
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="15"
+            android:textSize="20dp"
+            android:id="@+id/destination"
+            android:layout_gravity="center"
+            android:layout_margin="20dp"
+            android:hint="목적지를 입력하세요"
+            android:layout_weight="1"
+            android:privateImeOptions="defaultInputmode=korean"
+            android:background="@drawable/roundet"
+            android:layout_centerInParent="true"
+            android:layout_alignTop="@id/ccline"
+            android:padding="13dp"
+            />
+    </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>
