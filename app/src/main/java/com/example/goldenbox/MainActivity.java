@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +18,9 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -180,6 +183,29 @@ public class MainActivity extends AppCompatActivity {
         //LocationManager 객체를 얻어온다
         final LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         lm2 = lm;
+        startTextView.setOnKeyListener(new View.OnKeyListener(){
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent){
+                switch (i){
+                    case KeyEvent.KEYCODE_ENTER:
+                        destinationTextView.requestFocus();
+                }
+                return true;
+            }
+        });
+        destinationTextView.setOnKeyListener(new View.OnKeyListener(){
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                switch (i) {
+                    case KeyEvent.KEYCODE_ENTER:
+                        InputMethodManager immhide = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+
+                        immhide.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
+                }
+                return true;
+            }
+        });
 
         //ImageButton toggle = (ImageButton)findViewById(R.id.toggle);
 
@@ -201,6 +227,9 @@ public class MainActivity extends AppCompatActivity {
                 }
                 try{
                     if(button.isSelected()) {//여기는 경로 얻어서 파이어 베이스 올리는 구역
+                        InputMethodManager immhide = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+
+                        immhide.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                         if(formatDate ==null) {
                             long now = System.currentTimeMillis();
                             date = new Date(now);
