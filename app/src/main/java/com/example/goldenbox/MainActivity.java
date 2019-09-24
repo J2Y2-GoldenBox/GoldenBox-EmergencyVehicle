@@ -93,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
                         ondestinationLongitude = snapshot.child("destinationLongitude").getValue().toString();
                         startAddress = snapshot.child("startAddress").getValue().toString();
                         destinationAddress = snapshot.child("destinationAddress").getValue().toString();
+                        //startTextView.setText(startAddress);
+                        //destinationTextView.setText(destinationAddress);
                         onStartFlag=true;
                         onStartTime = snapshot.getKey();
 
@@ -183,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
         //LocationManager 객체를 얻어온다
         final LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         lm2 = lm;
-        startTextView.setOnKeyListener(new View.OnKeyListener(){
+        /*startTextView.setOnKeyListener(new View.OnKeyListener(){
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent){
                 switch (i){
@@ -205,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return true;
             }
-        });
+        });*/
 
         //ImageButton toggle = (ImageButton)findViewById(R.id.toggle);
 
@@ -227,9 +229,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 try{
                     if(button.isSelected()) {//여기는 경로 얻어서 파이어 베이스 올리는 구역
-                        InputMethodManager immhide = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
 
-                        immhide.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                         if(formatDate ==null) {
                             long now = System.currentTimeMillis();
                             date = new Date(now);
