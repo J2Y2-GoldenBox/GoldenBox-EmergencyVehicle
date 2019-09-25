@@ -12,14 +12,16 @@
     <ImageButton
         android:id="@+id/toggle"
         android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="20dp"
-        android:layout_weight="1"
-        android:background="@drawable/imgbtn_states"
+        android:layout_height="250dp"
         android:layout_alignBottom="@id/cline"
         android:layout_centerInParent="true"
-        />
+        android:layout_gravity="center"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_weight="1"
+        android:background="@drawable/imgbtn_states" />
     <View
         android:id="@+id/cline"
         android:layout_width="wrap_content"
@@ -37,22 +39,25 @@
         android:layout_alignTop="@id/cline"
         android:layout_alignParentBottom="true"
         >
+
         <EditText
+            android:id="@+id/start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ems="15"
-            android:textSize="20dp"
-            android:id="@+id/start"
-            android:layout_gravity="center"
-            android:layout_margin="20dp"
-            android:hint="출발지를 입력하세요"
-            android:privateImeOptions="defaultInputmode=korean"
-            android:layout_weight="1"
-            android:background="@drawable/roundet"
             android:layout_alignBottom="@id/ccline"
             android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/roundet"
+            android:ems="15"
+            android:hint="출발지를 입력하세요"
             android:padding="13dp"
-            />
+            android:privateImeOptions="defaultInputmode=korean"
+            android:textSize="20dp" />
         <View
             android:id="@+id/ccline"
             android:layout_width="wrap_content"
@@ -60,22 +65,45 @@
             android:layout_centerInParent="true"
             android:background="@color/colorPrimary"
             />
+
         <EditText
+            android:id="@+id/destination"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ems="15"
-            android:textSize="20dp"
-            android:id="@+id/destination"
-            android:layout_gravity="center"
-            android:layout_margin="20dp"
-            android:hint="목적지를 입력하세요"
-            android:layout_weight="1"
-            android:privateImeOptions="defaultInputmode=korean"
-            android:background="@drawable/roundet"
-            android:layout_centerInParent="true"
             android:layout_alignTop="@id/ccline"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/roundet"
+            android:ems="15"
+            android:hint="목적지를 입력하세요"
             android:padding="13dp"
-            />
+            android:privateImeOptions="defaultInputmode=korean"
+            android:textSize="20dp" />
     </RelativeLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentRight="true"
+        android:layout_margin="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        app:cardCornerRadius="30dp">
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:text="Map"
+            android:textColor="@android:color/white" />
+    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

@@ -81,8 +81,6 @@ public class RouteFind extends AsyncTask<HashMap,String,String> {
             JSONObject jsonObject=trafastArray.getJSONObject(0);
             Log.d("TAG",jsonObject.toString());
             String path = jsonObject.getString("path");
-            MainActivity.pathArray = path;
-            MainActivity.checkflag = true;
 
             Log.d("PATH",path.toString());
             JSONArray pathArray = new JSONArray(path);
@@ -94,9 +92,12 @@ public class RouteFind extends AsyncTask<HashMap,String,String> {
                 Log.d("LNG",lng.toString()+" , "+lat.toString());
                 rg[i] =new RouteGPS(lat,lng);
                 arrayList.add(rg[i]);
+
+                MainActivity.pathArray = path;
+                MainActivity.checkflag = true;
             }
             Log.d("TAGRouteFind",Integer.toString(arrayList.size()));
-            MainActivity.arrayList2 = arrayList;
+            //MainActivity.arrayList2 = arrayList;
 
 
         } catch (JSONException e) {
